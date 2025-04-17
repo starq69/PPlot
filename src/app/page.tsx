@@ -57,7 +57,7 @@ const ImageGenerator = () => {
   }, [data]);
 
   const generateImages = async () => {
-    const imageSize = 200;
+    const imageSize = 640;
     const newImages = parsedData.map((record, index) => {
       // Find min and max values
       let minVal = record.punto1;
@@ -70,16 +70,50 @@ const ImageGenerator = () => {
       // Calculate percentage deviation
       const sp = ((maxVal - minVal) / minVal) * 100;
 
-      // Determine the positions of the points
-      const positions = {
-        punto1: { x: 0, y: 0 }, // Bottom-left
-        punto5: { x: imageSize, y: imageSize }, // Top-right
+      // Normalize values to fit within the image
+      const normalize = (value: number) => {
+        return ((value - minVal) / (maxVal - minVal)) * (imageSize * 0.8) + (imageSize * 0.1); // Add a 10% margin
       };
 
-      // Placeholder image URL (replace with actual image generation)
-      return `https://picsum.photos/${imageSize}/${imageSize}?random=${index}`;
+      const p1 = normalize(record.punto1);
+      const p2 = normalize(record.punto2);
+      const p3 = normalize(record.punto3);
+      const p4 = normalize(record.punto4);
+      const p5 = normalize(record.punto5);
+
+      // X positions are evenly spaced
+      const x1 = imageSize * 0.1;
+      const x2 = imageSize * 0.3;
+      const x3 = imageSize * 0.5;
+      const x4 = imageSize * 0.7;
+      const x5 = imageSize * 0.9;
+
+      // Y positions are normalized
+      const y1 = imageSize - p1;
+      const y2 = imageSize - p2;
+      const y3 = imageSize - p3;
+      const y4 = imageSize - p4;
+      const y5 = imageSize - p5;
+
+      // Create SVG path
+      const path = `M ${x1},${y1} L ${x2},${y2} L ${x3},${y3} L ${x4},${y4} L ${x5},${y5}`;
+
+      // Construct the SVG
+      const svgImage = (
+        <svg width={imageSize} height={imageSize} key={index}>
+          <rect width="100%" height="100%" fill="white" />
+          <path d={path} stroke="black" strokeWidth="2" fill="none" />
+          <circle cx={x1} cy={y1} r="5" fill="black" />
+          <circle cx={x2} cy={y2} r="5" fill="black" />
+          <circle cx={x3} cy={y3} r="5" fill="black" />
+          <circle cx={x4} cy={y4} r="5" fill="black" />
+          <circle cx={x5} cy={y5} r="5" fill="black" />
+        </svg>
+      );
+
+      return svgImage;
     });
-    setImages(newImages);
+    setImages(newImages as any);
   };
 
   const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -153,11 +187,11 @@ const ImageGenerator = () => {
         <div className="mt-4">
           <h2 className="text-lg font-medium text-foreground">Generated Images</h2>
           <div className="mt-2 grid grid-cols-1 md:grid-cols-3 gap-4">
-            {images.map((imageUrl, index) => (
+            {images.map((svgImage, index) => (
               <div key={index} className="relative">
-                <img src={imageUrl} alt={`Generated Image ${index}`} className="rounded-md shadow-md" />
+                {svgImage}
                 <Button
-                  onClick={() => downloadImage(imageUrl)}
+                  onClick={() => downloadImage('')}
                   className="absolute top-2 right-2 bg-secondary text-foreground hover:bg-accent text-sm"
                 >
                   Download

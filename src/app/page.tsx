@@ -123,17 +123,22 @@ const ImageGenerator = () => {
       // Create SVG path
       const path = `M ${x1},${y1} L ${x2},${y2} L ${x3},${y3} L ${x4},${y4} L ${x5},${y5}`;
 
+      // Calculate the height of each band
+      const bandHeight = imageSize / colorStops;
+
       // Construct the SVG
       const svgImage = (
         <svg width={imageSize} height={imageSize} key={index}>
-            <defs>
-              <linearGradient id={gradientId} x1="0%" y1="0%" x2="0%" y2="100%">
-                {gradientLevels.map((color, i) => (
-                    <stop key={i} offset={`${(i / (colorStops - 1)) * 100}%`} style={{ stopColor: color }} />
-                ))}
-              </linearGradient>
-            </defs>
-          <rect width="100%" height="100%" fill={backgroundGradient} />
+           {/* Background bands */}
+          {gradientLevels.map((color, i) => (
+            <rect
+              key={i}
+              width="100%"
+              height={bandHeight}
+              y={i * bandHeight}
+              fill={color}
+            />
+          ))}
           <path d={path} stroke="black" strokeWidth="2" fill="none" />
           <circle cx={x1} cy={y1} r="5" fill="black" />
           <circle cx={x2} cy={y2} r="5" fill="black" />

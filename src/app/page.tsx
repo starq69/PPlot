@@ -73,15 +73,17 @@ const ImageGenerator = () => {
       const gradientLevels: string[] = [];
 
       if (backgroundColor === 'red') {
-          for (let i = 0; i < colorStops; i++) {
-              const lightness = 100 - (i * (100 / (colorStops - 1)));
-              gradientLevels.push(`hsl(0, 100%, ${lightness}%)`);  // Red gradient levels
-          }
+        for (let i = 0; i < colorStops; i++) {
+          // Exclude 10% of the lightest and darkest shades
+          const lightness = 90 - (i * (70 / (colorStops - 1))) + 10;
+          gradientLevels.push(`hsl(0, 100%, ${lightness}%)`);  // Red gradient levels
+        }
       } else {
-          for (let i = 0; i < colorStops; i++) {
-              const lightness = 100 - (i * (100 / (colorStops - 1)));
-              gradientLevels.push(`hsl(120, 100%, ${lightness}%)`);  // Green gradient levels
-          }
+        for (let i = 0; i < colorStops; i++) {
+          // Exclude 10% of the lightest and darkest shades
+          const lightness = 90 - (i * (70 / (colorStops - 1))) + 10;
+          gradientLevels.push(`hsl(120, 100%, ${lightness}%)`);  // Green gradient levels
+        }
       }
 
       // Find min and max values

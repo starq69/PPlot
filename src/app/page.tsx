@@ -84,20 +84,6 @@ const ImageGenerator = () => {
           }
       }
 
-       // Generate gradient levels from white to saturated color
-       const generateGradientLevels = (baseColor: string, steps: number): string[] => {
-        const levels: string[] = [];
-        for (let i = 0; i < steps; i++) {
-            const saturation = (i / (steps - 1)) * 100; // Calculate saturation level
-            levels.push(`hsl(${baseColor}, ${saturation}%, 50%)`); // HSL with fixed lightness
-        }
-        return levels;
-    };
-
-    const gradientLevelsNew: string[] = backgroundColor === 'red'
-        ? generateGradientLevels('0', colorStops).reverse() // Red hues
-        : generateGradientLevels('120', colorStops).reverse(); // Green hues
-
       // Find min and max values
       let minVal = record.punto1;
       let maxVal = record.punto1;
@@ -137,22 +123,17 @@ const ImageGenerator = () => {
       // Create SVG path
       const path = `M ${x1},${y1} L ${x2},${y2} L ${x3},${y3} L ${x4},${y4} L ${x5},${y5}`;
 
-      // Calculate the height of each band
-      const bandHeight = imageSize / colorStops;
-
       // Construct the SVG
       const svgImage = (
         <svg width={imageSize} height={imageSize} key={index}>
-           {/* Background bands */}
-          {gradientLevelsNew.map((color, i) => (
-            <rect
-              key={i}
-              width="100%"
-              height={bandHeight}
-              y={i * bandHeight}
-              fill={color}
-            />
-          ))}
+          <defs>
+            <linearGradient id={gradientId} x1="0%" y1="0%" x2="0%" y2="100%">
+              {gradientLevels.map((color, i) => (
+                <stop key={i} offset={`${i * (100 / (colorStops - 1))}%`} stopColor={color} />
+              ))}
+            </linearGradient>
+          </defs>
+          <rect width="100%" height="100%" fill={backgroundGradient} />
           <path d={path} stroke="black" strokeWidth="2" fill="none" />
           <circle cx={x1} cy={y1} r="5" fill="black" />
           <circle cx={x2} cy={y2} r="5" fill="black" />

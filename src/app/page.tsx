@@ -84,6 +84,20 @@ const ImageGenerator = () => {
           }
       }
 
+       // Generate gradient levels from white to saturated color
+       const generateGradientLevels = (baseColor: string, steps: number): string[] => {
+        const levels: string[] = [];
+        for (let i = 0; i < steps; i++) {
+            const saturation = (i / (steps - 1)) * 100; // Calculate saturation level
+            levels.push(`hsl(${baseColor}, ${saturation}%, 50%)`); // HSL with fixed lightness
+        }
+        return levels;
+    };
+
+    const gradientLevelsNew: string[] = backgroundColor === 'red'
+        ? generateGradientLevels('0', colorStops).reverse() // Red hues
+        : generateGradientLevels('120', colorStops).reverse(); // Green hues
+
       // Find min and max values
       let minVal = record.punto1;
       let maxVal = record.punto1;
@@ -130,7 +144,7 @@ const ImageGenerator = () => {
       const svgImage = (
         <svg width={imageSize} height={imageSize} key={index}>
            {/* Background bands */}
-          {gradientLevels.map((color, i) => (
+          {gradientLevelsNew.map((color, i) => (
             <rect
               key={i}
               width="100%"

@@ -61,6 +61,12 @@ const ImageGenerator = () => {
     const newImages = parsedData.map((record, index) => {
        // Determine background color
       const backgroundColor = record.punto1 > record.punto5 ? 'red' : 'green';
+      const gradientId = `gradient${index}`;
+
+      // Determine background gradient
+      const backgroundGradient = record.punto1 > record.punto5
+        ? `url(#${gradientId})`
+        : `url(#${gradientId})`;
 
       // Find min and max values
       let minVal = record.punto1;
@@ -104,7 +110,13 @@ const ImageGenerator = () => {
       // Construct the SVG
       const svgImage = (
         <svg width={imageSize} height={imageSize} key={index}>
-          <rect width="100%" height="100%" fill={backgroundColor} />
+            <defs>
+              <linearGradient id={gradientId} x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" style={{ stopColor: backgroundColor === 'red' ? '#FFDDDD' : '#DDFFDD' }} />
+                <stop offset="100%" style={{ stopColor: backgroundColor }} />
+              </linearGradient>
+            </defs>
+          <rect width="100%" height="100%" fill={backgroundGradient} />
           <path d={path} stroke="black" strokeWidth="2" fill="none" />
           <circle cx={x1} cy={y1} r="5" fill="black" />
           <circle cx={x2} cy={y2} r="5" fill="black" />

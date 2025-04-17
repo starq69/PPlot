@@ -19,7 +19,7 @@ interface DataRecord {
 
 const ImageGenerator = () => {
   const [data, setData] = useState<string>('');
-  const [images, setImages] = useState<JSX.Element[]>([]); // Change the type of images to JSX.Element[]
+  const [images, setImages] = useState<JSX.Element[]>([]);
   const [parsedData, setParsedData] = useState<DataRecord[]>([]);
 
   const handleDataChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -59,6 +59,9 @@ const ImageGenerator = () => {
   const generateImages = async () => {
     const imageSize = 640;
     const newImages = parsedData.map((record, index) => {
+       // Determine background color
+      const backgroundColor = record.punto1 > record.punto5 ? 'red' : 'green';
+
       // Find min and max values
       let minVal = record.punto1;
       let maxVal = record.punto1;
@@ -101,7 +104,7 @@ const ImageGenerator = () => {
       // Construct the SVG
       const svgImage = (
         <svg width={imageSize} height={imageSize} key={index}>
-          <rect width="100%" height="100%" fill="white" />
+          <rect width="100%" height="100%" fill={backgroundColor} />
           <path d={path} stroke="black" strokeWidth="2" fill="none" />
           <circle cx={x1} cy={y1} r="5" fill="black" />
           <circle cx={x2} cy={y2} r="5" fill="black" />
@@ -209,5 +212,3 @@ const ImageGenerator = () => {
 };
 
 export default ImageGenerator;
-
-    

@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState } from 'react';
@@ -6,24 +5,81 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
+import { useEffect } from 'react';
+
+interface DataRecord {
+  timestamp: string | Date;
+  mm: boolean;
+  punto1: number;
+  punto2: number;
+  punto3: number;
+  punto4: number;
+  punto5: number;
+}
 
 const ImageGenerator = () => {
   const [data, setData] = useState<string>('');
   const [images, setImages] = useState<string[]>([]);
+  const [parsedData, setParsedData] = useState<DataRecord[]>([]);
 
   const handleDataChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     setData(event.target.value);
   };
 
+  const parseData = (dataString: string): DataRecord[] => {
+    const lines = dataString.trim().split('\n');
+    const parsedRecords: DataRecord[] = [];
+
+    for (const line of lines) {
+      const values = line.split(';');
+      if (values.length === 7) {
+        const [timestamp, mm, punto1, punto2, punto3, punto4, punto5] = values;
+
+        const record: DataRecord = {
+          timestamp: timestamp,
+          mm: mm.toLowerCase() === 'true',
+          punto1: parseFloat(punto1),
+          punto2: parseFloat(punto2),
+          punto3: parseFloat(punto3),
+          punto4: parseFloat(punto4),
+          punto5: parseFloat(punto5),
+        };
+        parsedRecords.push(record);
+      }
+    }
+    return parsedRecords;
+  };
+
+  useEffect(() => {
+    if (data) {
+      setParsedData(parseData(data));
+    }
+  }, [data]);
+
   const generateImages = async () => {
-    // Placeholder for data parsing and image generation logic
-    // This should parse the data, compute colors based on data relations, and generate images
-    // For now, let's simulate image generation with placeholder images
-    const numberOfImages = 3;
-    const placeholderImages = Array.from({ length: numberOfImages }, (_, index) =>
-      `https://picsum.photos/200/200?random=${index}`
-    );
-    setImages(placeholderImages);
+    const imageSize = 200;
+    const newImages = parsedData.map((record, index) => {
+      // Find min and max values
+      let minVal = record.punto1;
+      let maxVal = record.punto1;
+      for (const key of ['punto2', 'punto3', 'punto4', 'punto5'] as const) {
+        minVal = Math.min(minVal, record[key]);
+        maxVal = Math.max(maxVal, record[key]);
+      }
+
+      // Calculate percentage deviation
+      const sp = ((maxVal - minVal) / minVal) * 100;
+
+      // Determine the positions of the points
+      const positions = {
+        punto1: { x: 0, y: 0 }, // Bottom-left
+        punto5: { x: imageSize, y: imageSize }, // Top-right
+      };
+
+      // Placeholder image URL (replace with actual image generation)
+      return `https://picsum.photos/${imageSize}/${imageSize}?random=${index}`;
+    });
+    setImages(newImages);
   };
 
   const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {

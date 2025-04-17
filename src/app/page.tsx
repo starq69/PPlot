@@ -19,7 +19,7 @@ interface DataRecord {
 
 const ImageGenerator = () => {
   const [data, setData] = useState<string>('');
-  const [images, setImages] = useState<string[]>([]);
+  const [images, setImages] = useState<JSX.Element[]>([]); // Change the type of images to JSX.Element[]
   const [parsedData, setParsedData] = useState<DataRecord[]>([]);
 
   const handleDataChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -113,7 +113,7 @@ const ImageGenerator = () => {
 
       return svgImage;
     });
-    setImages(newImages as any);
+    setImages(newImages);
   };
 
   const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {

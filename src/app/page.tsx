@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -172,6 +172,12 @@ const ImageGenerator = () => {
     console.log('Downloading all images as ZIP');
   };
 
+  const handleReset = () => {
+    setData('');
+    setImages([]);
+    setParsedData([]);
+  };
+
   return (
     <div className="container mx-auto p-4">
       <Card>
@@ -213,7 +219,10 @@ const ImageGenerator = () => {
               />
             </div>
           </div>
-          <Button onClick={generateImages}>Generate Images</Button>
+          <div className="flex">
+            <Button onClick={generateImages} className="mr-2">Generate Images</Button>
+            <Button onClick={handleReset} variant="secondary">Reset</Button>
+          </div>
         </CardContent>
       </Card>
 

@@ -1,5 +1,5 @@
 'use client';
-
+import {Canvg, presets} from 'canvg';
 import { useState, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -256,7 +256,31 @@ const ImageGenerator = () => {
     const svgDiv = button.parentElement;
     const svgElement = svgDiv?.querySelector('svg');
     const imageName = svgElement?.getAttribute('data-svg-name');
-    console.log('Downloading image:', imageName);
+
+    if (svgElement && imageName) {      
+        const svgString = new XMLSerializer().serializeToString(svgElement);
+        const canvas = document.createElement('canvas');
+        canvas.width = svgElement.clientWidth;
+        canvas.height = svgElement.clientHeight;
+        const ctx = canvas.getContext('2d');
+        //const preset = presets.node();
+
+        if (ctx) {
+          const v = Canvg.fromString(ctx, svgString);
+
+          v.render().then(() => {
+            const pngDataUrl = canvas.toDataURL('image/png');
+            const downloadLink = document.createElement('a');
+            downloadLink.href = pngDataUrl;
+            downloadLink.download = `${imageName}.png`;
+            downloadLink.click();
+          });
+        } else {
+          console.error('Failed to get 2D context');
+        }
+      } else {
+        console.error('SVG element or image name attribute not found');
+      }
   };
 
   const downloadAllImages = () => {

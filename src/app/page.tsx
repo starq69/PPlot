@@ -231,11 +231,11 @@ const ImageGenerator = () => {
           </defs>
           <rect width="100%" height="100%" fill={backgroundGradient} />
           <path d={path} stroke="black" strokeWidth="2" fill="none" />
-          {/* <circle cx={x1} cy={y1} r="5" fill="black" />
+          <circle cx={x1} cy={y1} r="5" fill="black" />
           <circle cx={x2} cy={y2} r="5" fill="black" />
           <circle cx={x3} cy={y3} r="5" fill="black" />
           <circle cx={x4} cy={y4} r="5" fill="black" />
-          <circle cx={x5} cy={y5} r="5" fill="black" /> */}
+          <circle cx={x5} cy={y5} r="5" fill="black" /> 
         </svg>
       );
 

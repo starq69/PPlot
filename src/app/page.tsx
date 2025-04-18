@@ -150,6 +150,100 @@ const ImageGenerator = () => {
     setImages(newImages);
   };
 
+  const generateLinePlotImages = async () => {
+    const imageSize = 320;
+    const newImages = parsedData.map((record, index) => {
+       // Determine background color
+      const backgroundColor = record.punto1 > record.punto5 ? 'red' : 'green';
+      const gradientId = `gradient${index}`;
+
+      // Determine background gradient
+      const backgroundGradient = record.punto1 > record.punto5
+        ? `url(#${gradientId})`
+        : `url(#${gradientId})`;
+
+       // Define color stops for gradient
+      const colorStops = 5;
+      const gradientLevels: string[] = [];
+
+      if (backgroundColor === 'red') {
+        for (let i = 0; i < colorStops; i++) {
+          // Exclude 10% of the lightest and darkest shades
+          const lightness = 90 - (i * (70 / (colorStops - 1))) + 10;
+          gradientLevels.push(`hsl(0, 100%, ${lightness}%)`);  // Red gradient levels
+        }
+      } else {
+        for (let i = 0; i < colorStops; i++) {
+          // Exclude 10% of the lightest and darkest shades
+          const lightness = 90 - (i * (70 / (colorStops - 1))) + 10;
+          gradientLevels.push(`hsl(120, 100%, ${lightness}%)`);  // Green gradient levels
+        }
+      }
+
+      // Find min and max values
+      let minVal = record.punto1;
+      let maxVal = record.punto1;
+      for (const key of ['punto2', 'punto3', 'punto4', 'punto5'] as const) {
+        minVal = Math.min(minVal, record[key]);
+        maxVal = Math.max(maxVal, record[key]);
+      }
+
+      // Calculate percentage deviation
+      const sp = ((maxVal - minVal) / minVal) * 100;
+
+      // Normalize values to fit within the image
+      const normalize = (value: number) => {
+        return ((value - minVal) / (maxVal - minVal)) * (imageSize * 0.8) + (imageSize * 0.1); // Add a 10% margin
+      };
+
+      const p1 = normalize(record.punto1);
+      const p2 = normalize(record.punto2);
+      const p3 = normalize(record.punto3);
+      const p4 = normalize(record.punto4);
+      const p5 = normalize(record.punto5);
+
+      // X positions are evenly spaced
+      const x1 = imageSize * 0.1;
+      const x2 = imageSize * 0.3;
+      const x3 = imageSize * 0.5;
+      const x4 = imageSize * 0.7;
+      const x5 = imageSize * 0.9;
+
+      // Y positions are normalized
+      const y1 = imageSize - p1;
+      const y2 = imageSize - p2;
+      const y3 = imageSize - p3;
+      const y4 = imageSize - p4;
+      const y5 = imageSize - p5;
+
+      // Create SVG path
+      const path = `M ${x1},${y1} L ${x2},${y2} L ${x3},${y3} L ${x4},${y4} L ${x5},${y5}`;
+
+      // Construct the SVG
+      const svgImage = (
+        <svg width={imageSize} height={imageSize} key={index}>
+          <defs>
+            <linearGradient id={gradientId} x1="0%" y1="0%" x2="0%" y2="100%">
+              {gradientLevels.map((color, i) => (
+                <stop key={i} offset={`${i * (100 / (colorStops - 1))}%`} stopColor={color} />
+              ))}
+            </linearGradient>
+          </defs>
+          <rect width="100%" height="100%" fill={backgroundGradient} />
+          <path d={path} stroke="black" strokeWidth="2" fill="none" />
+          {/* <circle cx={x1} cy={y1} r="5" fill="black" />
+          <circle cx={x2} cy={y2} r="5" fill="black" />
+          <circle cx={x3} cy={y3} r="5" fill="black" />
+          <circle cx={x4} cy={y4} r="5" fill="black" />
+          <circle cx={x5} cy={y5} r="5" fill="black" /> */}
+        </svg>
+      );
+
+      return svgImage;
+    });
+    setImages(newImages);
+  };
+
   const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
@@ -221,6 +315,7 @@ const ImageGenerator = () => {
           </div>
           <div className="flex">
             <Button onClick={generateImages} className="mr-2">Point Plot</Button>
+            <Button onClick={generateLinePlotImages} className="mr-2">Line Plot</Button>
             <Button onClick={handleReset} variant="secondary">Reset</Button>
           </div>
         </CardContent>

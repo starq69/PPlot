@@ -220,7 +220,7 @@ const ImageGenerator = () => {
             </div>
           </div>
           <div className="flex">
-            <Button onClick={generateImages} className="mr-2">Generate Images</Button>
+            <Button onClick={generateImages} className="mr-2">Point Plot</Button>
             <Button onClick={handleReset} variant="secondary">Reset</Button>
           </div>
         </CardContent>

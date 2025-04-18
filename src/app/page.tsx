@@ -61,9 +61,9 @@ const ImageGenerator = () => {
     const newImages = parsedData.map((record, index) => {
        // Determine background color
       const backgroundColor = record.punto1 > record.punto5 ? 'red' : 'green';
+      /*
       const gradientId = `gradient${index}`;
 
-      /*
       // Determine background gradient
       const backgroundGradient = record.punto1 > record.punto5
         ? `url(#${gradientId})`
@@ -129,7 +129,7 @@ const ImageGenerator = () => {
 
       // Construct the SVG
       const svgImage = (
-        <svg width={imageSize} height={imageSize} key={index}>
+        <svg width={imageSize} height={imageSize} key={index} data-svg-name={String(record.timestamp)}>
           <rect width="100%" height="100%" fill={backgroundColor} />
           <path d={path} stroke="black" strokeWidth="2" fill="none" />
           <circle cx={x1} cy={y1} r="5" fill="black" />
@@ -251,9 +251,12 @@ const ImageGenerator = () => {
     }
   };
 
-  const downloadImage = (imageUrl: string) => {
-    // Placeholder for image download logic
-    console.log('Downloading image:', imageUrl);
+  const downloadImage = (event: React.MouseEvent<HTMLButtonElement>) => {
+    const button = event.currentTarget;
+    const svgDiv = button.parentElement;
+    const svgElement = svgDiv?.querySelector('svg');
+    const imageName = svgElement?.getAttribute('data-svg-name');
+    console.log('Downloading image:', imageName);
   };
 
   const downloadAllImages = () => {
@@ -324,7 +327,7 @@ const ImageGenerator = () => {
               <div key={index} className="relative">
                 {svgImage}
                 <Button
-                  onClick={() => downloadImage('')}
+                  onClick={downloadImage}
                   className="absolute top-2 right-2 bg-secondary text-foreground hover:bg-accent text-sm"
                 >
                   Download

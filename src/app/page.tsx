@@ -57,7 +57,7 @@ const ImageGenerator = () => {
   }, [data]);
 
   const generateImages = async () => {
-    const imageSize = 640;
+    const imageSize = 320;
     const newImages = parsedData.map((record, index) => {
        // Determine background color
       const backgroundColor = record.punto1 > record.punto5 ? 'red' : 'green';

@@ -56,7 +56,7 @@ const ImageGenerator = () => {
     }
   }, [data]);
 
-  const generateImages = async () => {
+  const buildPointPlot = async () => {
     const imageSize = 320;
     const newImages = parsedData.map((record, index) => {
        // Determine background color
@@ -150,7 +150,7 @@ const ImageGenerator = () => {
     setImages(newImages);
   };
 
-  const generateLinePlotImages = async () => {
+  const buildLinePlot = async () => {
     const imageSize = 320;
     const newImages = parsedData.map((record, index) => {
        // Determine background color
@@ -314,8 +314,8 @@ const ImageGenerator = () => {
             </div>
           </div>
           <div className="flex">
-            <Button onClick={generateImages} className="mr-2">Point Plot</Button>
-            <Button onClick={generateLinePlotImages} className="mr-2">Line Plot</Button>
+            <Button onClick={buildPointPlot} className="mr-2">Point Plot</Button>
+            <Button onClick={buildLinePlot} className="mr-2">Line Plot</Button>
             <Button onClick={handleReset} variant="secondary">Reset</Button>
           </div>
         </CardContent>

@@ -1,6 +1,6 @@
 'use client';
 import { computePlotData, DataRecord } from '../utils/computePlotData';
-import {Canvg, presets} from 'canvg';
+import { Canvg, presets } from 'canvg';
 import { useState, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -49,29 +49,29 @@ const ImageGenerator = () => {
     }
   }, [data]);
 
-// buildPointPlot ora usa computePlotData importata
-//
-const buildPointPlot = async (style: string) => {
-  const imageSize = 320;
+  // buildPointPlot ora usa computePlotData importata
+  //
+  const buildPointPlot = async (style: string) => {
+    const imageSize = 320;
 
-  console.log(style)
-  
-  const newImages = parsedData.map((record, index) => {
-    const plotData = computePlotData(record, imageSize);
+    console.log(style)
 
-    const path = `M ${plotData.points.map(p => `${p.x},${p.y}`).join(' L ')}`;
-    return (
-      <svg width={imageSize} height={imageSize} key={index} data-svg-name={String(plotData.timestamp)}>
-        <rect width="100%" height="100%" fill={plotData.backgroundColor} />
-        <path d={path} stroke="black" strokeWidth="2" fill="none" />
-        {plotData.points.map((p, i) => (
-          <circle key={i} cx={p.x} cy={p.y} r="5" fill="black" />
-        ))}
-      </svg>
-    );
-  });
-  setImages(newImages);
-};
+    const newImages = parsedData.map((record, index) => {
+      const plotData = computePlotData(record, imageSize);
+
+      const path = `M ${plotData.points.map(p => `${p.x},${p.y}`).join(' L ')}`;
+      return (
+        <svg width={imageSize} height={imageSize} key={index} data-svg-name={String(plotData.timestamp)}>
+          <rect width="100%" height="100%" fill={plotData.backgroundColor} />
+          <path d={path} stroke="black" strokeWidth="2" fill="none" />
+          {plotData.points.map((p, i) => (
+            <circle key={i} cx={p.x} cy={p.y} r="5" fill="black" />
+          ))}
+        </svg>
+      );
+    });
+    setImages(newImages);
+  };
 
 
   const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -92,30 +92,30 @@ const buildPointPlot = async (style: string) => {
     const svgElement = svgDiv?.querySelector('svg');
     const imageName = svgElement?.getAttribute('data-svg-name');
 
-    if (svgElement && imageName) {      
-        const svgString = new XMLSerializer().serializeToString(svgElement);
-        const canvas = document.createElement('canvas');
-        canvas.width = svgElement.clientWidth;
-        canvas.height = svgElement.clientHeight;
-        const ctx = canvas.getContext('2d');
-        //const preset = presets.node();
+    if (svgElement && imageName) {
+      const svgString = new XMLSerializer().serializeToString(svgElement);
+      const canvas = document.createElement('canvas');
+      canvas.width = svgElement.clientWidth;
+      canvas.height = svgElement.clientHeight;
+      const ctx = canvas.getContext('2d');
+      //const preset = presets.node();
 
-        if (ctx) {
-          const v = Canvg.fromString(ctx, svgString);
+      if (ctx) {
+        const v = Canvg.fromString(ctx, svgString);
 
-          v.render().then(() => {
-            const pngDataUrl = canvas.toDataURL('image/png');
-            const downloadLink = document.createElement('a');
-            downloadLink.href = pngDataUrl;
-            downloadLink.download = `${imageName}.png`;
-            downloadLink.click();
-          });
-        } else {
-          console.error('Failed to get 2D context');
-        }
+        v.render().then(() => {
+          const pngDataUrl = canvas.toDataURL('image/png');
+          const downloadLink = document.createElement('a');
+          downloadLink.href = pngDataUrl;
+          downloadLink.download = `${imageName}.png`;
+          downloadLink.click();
+        });
       } else {
-        console.error('SVG element or image name attribute not found');
+        console.error('Failed to get 2D context');
       }
+    } else {
+      console.error('SVG element or image name attribute not found');
+    }
   };
 
   const downloadAllImages = () => {
@@ -180,13 +180,13 @@ const buildPointPlot = async (style: string) => {
       {images.length > 0 && (
         <div className="mt-4">
           <h2 className="text-lg font-medium text-foreground">Generated Images</h2>
-          <div className="mt-2 grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="mt-2 flex flex-wrap gap-[10px]">
             {images.map((svgImage, index) => (
-              <div key={index} className="relative">
+              <div key={index} className="flex flex-col items-start gap-[3px] w-fit">
                 {svgImage}
                 <Button
                   onClick={downloadImage}
-                  className="absolute top-2 right-2 bg-secondary text-foreground hover:bg-accent text-sm"
+                  className="bg-primary text-primary-foreground hover:bg-primary/80 text-sm"
                 >
                   Download
                 </Button>

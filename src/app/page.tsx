@@ -8,6 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Textarea } from '@/components/ui/textarea';
 import { useEffect } from 'react';
 
+const style = 'default'
 
 const ImageGenerator = () => {
   const [data, setData] = useState<string>('');
@@ -50,8 +51,11 @@ const ImageGenerator = () => {
 
 // buildPointPlot ora usa computePlotData importata
 //
-const buildPointPlot = async () => {
+const buildPointPlot = async (style: string) => {
   const imageSize = 320;
+
+  console.log(style)
+  
   const newImages = parsedData.map((record, index) => {
     const plotData = computePlotData(record, imageSize);
 
@@ -167,7 +171,7 @@ const buildPointPlot = async () => {
             </div>
           </div>
           <div className="flex">
-            <Button onClick={buildPointPlot} className="mr-2">Point Plot</Button>
+            <Button onClick={() => buildPointPlot(style)} className="mr-2">Point Plot</Button>
             <Button onClick={handleReset} variant="secondary">Reset</Button>
           </div>
         </CardContent>
